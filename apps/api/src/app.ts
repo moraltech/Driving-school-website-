@@ -45,8 +45,9 @@ if (env.NODE_ENV !== "test") {
 }
 
 app.get("/api/csrf-token", (req, res) => {
-  const token = typeof (req as { csrfToken?: () => string }).csrfToken === "function"
-    ? (req as { csrfToken: () => string }).csrfToken()
+  const requestWithCsrf = req as unknown as { csrfToken?: () => string };
+  const token = typeof requestWithCsrf.csrfToken === "function"
+    ? requestWithCsrf.csrfToken()
     : null;
   res.json({ csrfToken: token });
 });

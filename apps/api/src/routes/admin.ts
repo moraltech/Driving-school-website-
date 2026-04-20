@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import { body } from "express-validator";
 import { prisma } from "@drivingschool/db";
 import { authenticate, authorize, ROLE } from "../middleware/auth";
@@ -62,7 +62,7 @@ adminRouter.post(
     body("insuranceExpiryAt").isISO8601(),
     validate
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const vehicle = await prisma.vehicle.create({
       data: {
         ...req.body,

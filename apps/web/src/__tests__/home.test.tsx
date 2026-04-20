@@ -4,6 +4,6 @@ import HomePage from "../app/page";
 describe("HomePage", () => {
   it("renders booking call to action", () => {
     render(<HomePage />);
-    expect(screen.getByText(/Book a Lesson/i)).toBeInTheDocument();
+    expect(Boolean(screen.getByText(/Book a Lesson/i))).toBe(true);
   });
 });

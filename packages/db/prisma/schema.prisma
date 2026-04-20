@@ -3,9 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
 }
 
 enum Role {
@@ -44,6 +42,8 @@ model User {
   documents         Document[]
   taughtBookings    Booking[] @relation("InstructorBookings")
   studentBookings   Booking[] @relation("StudentBookings")
+  submittedReviews  InstructorReview[] @relation("StudentReviews")
+  receivedReviews   InstructorReview[] @relation("InstructorReviews")
 }
 
 model InstructorProfile {
@@ -115,8 +115,8 @@ model InstructorReview {
   createdAt    DateTime @default(now())
 
   booking    Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  student    User    @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  instructor User    @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  student    User    @relation("StudentReviews", fields: [studentId], references: [id], onDelete: Cascade)
+  instructor User    @relation("InstructorReviews", fields: [instructorId], references: [id], onDelete: Cascade)
 }
 
 model StudyMaterial {

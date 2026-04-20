@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Request, type Response } from "express";
 import { body } from "express-validator";
 import { prisma } from "@drivingschool/db";
 import { authenticate, authorize, ROLE, type AuthRequest } from "../middleware/auth";
@@ -37,7 +37,7 @@ bookingsRouter.post(
     body("pickupLocation").isLength({ min: 3 }),
     validate
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const booking = await prisma.booking.create({ data: req.body });
     const student = await prisma.user.findUniqueOrThrow({ where: { id: booking.studentId } });
 
@@ -63,9 +63,10 @@ bookingsRouter.patch(
   authenticate,
   authorize([ROLE.ADMIN, ROLE.INSTRUCTOR]),
   [body("status").isIn(["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"]), validate],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
+    const bookingId = String(req.params.id);
     const booking = await prisma.booking.update({
-      where: { id: req.params.id },
+      where: { id: bookingId },
       data: { status: req.body.status }
     });
 

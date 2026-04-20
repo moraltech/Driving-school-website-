@@ -2,9 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
+    "rootDir": "../../",
     "module": "CommonJS",
     "types": ["node", "jest"],
-    "rootDir": "src"
+    "noImplicitAny": false
   },
   "include": ["src/**/*.ts"]
 }

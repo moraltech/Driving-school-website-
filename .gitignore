@@ -17,3 +17,5 @@ packages/db/generated
 /.vscode
 pnpm-lock.yaml
 yarn.lock
+*.tsbuildinfo
+*.js

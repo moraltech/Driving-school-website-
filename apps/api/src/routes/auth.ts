@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { type Request, type Response, Router } from "express";
 import { body } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -17,7 +17,7 @@ authRouter.post(
     body("role").isIn(["STUDENT", "INSTRUCTOR", "ADMIN"]),
     validate
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { name, email, password, role } = req.body;
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) return res.status(409).json({ message: "Email already exists" });
@@ -43,7 +43,7 @@ authRouter.post(
 authRouter.post(
   "/auth/login",
   [body("email").isEmail(), body("password").isLength({ min: 8 }), validate],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user?.passwordHash) return res.status(401).json({ message: "Invalid credentials" });

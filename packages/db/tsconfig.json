@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "declaration": true,
-    "module": "CommonJS"
+    "module": "CommonJS",
+    "types": ["node"],
+    "rootDir": "."
   },
   "include": ["src/**/*.ts", "prisma/**/*.ts"]
 }

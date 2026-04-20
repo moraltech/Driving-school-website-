@@ -13,10 +13,13 @@
     "test": "echo 'db test: no-op'"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "latest",
     "@prisma/client": "latest",
-    "bcryptjs": "latest"
+    "bcryptjs": "latest",
+    "pg": "latest"
   },
   "devDependencies": {
+    "@types/node": "latest",
     "prisma": "latest",
     "tsx": "latest",
     "typescript": "latest"

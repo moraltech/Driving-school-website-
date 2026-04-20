@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { type Request, type Response, Router } from "express";
 import { body } from "express-validator";
 import { prisma } from "@drivingschool/db";
 import { authenticate, authorize, ROLE } from "../middleware/auth";
@@ -12,7 +12,7 @@ paymentsRouter.post(
   authenticate,
   authorize([ROLE.STUDENT, ROLE.ADMIN]),
   [body("bookingId").isString(), validate],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const booking = await prisma.booking.findUnique({ where: { id: req.body.bookingId }, include: { course: true } });
     if (!booking) return res.status(404).json({ message: "Booking not found" });
 
@@ -45,8 +45,9 @@ paymentsRouter.post(
   }
 );
 
-paymentsRouter.post("/payments/:bookingId/refund", authenticate, authorize([ROLE.ADMIN]), async (req, res) => {
-  const booking = await prisma.booking.findUnique({ where: { id: req.params.bookingId } });
+paymentsRouter.post("/payments/:bookingId/refund", authenticate, authorize([ROLE.ADMIN]), async (req: Request, res: Response) => {
+  const bookingId = Array.isArray(req.params.bookingId) ? req.params.bookingId[0] : req.params.bookingId;
+  const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
   if (!booking) return res.status(404).json({ message: "Booking not found" });
 
   await prisma.booking.update({ where: { id: booking.id }, data: { paymentStatus: "REFUNDED" } });

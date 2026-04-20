@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { type Response, Router } from "express";
 import { body } from "express-validator";
 import { prisma } from "@drivingschool/db";
-import { authenticate, authorize, ROLE } from "../middleware/auth";
+import { authenticate, authorize, ROLE, type AuthRequest } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 
 export const instructorsRouter = Router();
@@ -19,7 +19,7 @@ instructorsRouter.post(
   authenticate,
   authorize([ROLE.STUDENT]),
   [body("bookingId").isString(), body("rating").isInt({ min: 1, max: 5 }), body("comment").optional().isString(), validate],
-  async (req, res) => {
+  async (req: AuthRequest, res: Response) => {
     const { instructorId } = req.params;
     const { bookingId, rating, comment } = req.body;
 

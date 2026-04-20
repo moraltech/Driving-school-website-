@@ -20,7 +20,9 @@ export function LiveChatWidget() {
       setMessages((prev) => [...prev.slice(-19), message]);
     });
 
-    return () => socket.disconnect();
+    return () => {
+      socket.disconnect();
+    };
   }, [socketUrl]);
 
   const onSubmit = (event: FormEvent) => {

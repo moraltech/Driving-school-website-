@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Response, Router } from "express";
 import { body } from "express-validator";
 import multer from "multer";
 import { prisma } from "@drivingschool/db";
@@ -33,7 +33,7 @@ studentsRouter.post(
   authenticate,
   authorize([ROLE.STUDENT]),
   [body("answers").isArray({ min: 1 }), validate],
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res: Response) => {
     const questions = await prisma.practiceQuestion.findMany({ take: req.body.answers.length });
     const score = questions.reduce((acc, q, i) => (req.body.answers[i] === q.correctAnswer ? acc + 1 : acc), 0);
     const percent = questions.length ? Math.round((score / questions.length) * 100) : 0;
@@ -49,7 +49,7 @@ studentsRouter.post(
   authorize([ROLE.STUDENT]),
   upload.single("document"),
   [body("type").isIn(["ID", "PERMIT", "CERTIFICATE"]), validate],
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res: Response) => {
     if (!req.file) return res.status(400).json({ message: "File required" });
 
     const document = await prisma.document.create({
