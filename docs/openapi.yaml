@@ -1,0 +1,43 @@
+openapi: 3.0.3
+info:
+  title: Driving School API
+  version: 1.0.0
+  description: REST API for bookings, portal, admin, and integrations.
+servers:
+  - url: http://localhost:4000/api
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Service available
+  /courses:
+    get:
+      summary: List active courses
+      responses:
+        '200':
+          description: Course list
+  /bookings:
+    get:
+      summary: List bookings
+      responses:
+        '200':
+          description: Booking list
+    post:
+      summary: Create booking
+      responses:
+        '201':
+          description: Booking created
+  /payments/create-checkout:
+    post:
+      summary: Create checkout session
+      responses:
+        '200':
+          description: Payment checkout created
+  /admin/analytics:
+    get:
+      summary: Fetch analytics dashboard data
+      responses:
+        '200':
+          description: Analytics payload

@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  INSTRUCTOR
+  STUDENT
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+  FAILED
+}
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  passwordHash    String?
+  name            String
+  role            Role
+  phone           String?
+  preferredLocale String    @default("en")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  instructorProfile InstructorProfile?
+  studentProfile    StudentProfile?
+  documents         Document[]
+  taughtBookings    Booking[] @relation("InstructorBookings")
+  studentBookings   Booking[] @relation("StudentBookings")
+}
+
+model InstructorProfile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  bio              String
+  ratingAverage    Float    @default(5)
+  ratingCount      Int      @default(0)
+  availabilityJson Json
+  calendarIcalUrl  String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StudentProfile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  permitNumber     String?
+  completedLessons Int      @default(0)
+  examPassRate     Float    @default(0)
+  progressPercent  Float    @default(0)
+  notes            String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  title           String
+  description     String
+  level           String
+  durationMinutes Int
+  priceCents      Int
+  tier            String
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+
+  bookings Booking[]
+}
+
+model Booking {
+  id               String        @id @default(cuid())
+  studentId        String
+  instructorId     String
+  courseId         String
+  startAt          DateTime
+  endAt            DateTime
+  pickupLocation   String
+  status           BookingStatus @default(PENDING)
+  paymentStatus    PaymentStatus @default(UNPAID)
+  stripeSessionId  String?
+  calendarEventRef String?
+  createdAt        DateTime      @default(now())
+
+  student    User   @relation("StudentBookings", fields: [studentId], references: [id], onDelete: Cascade)
+  instructor User   @relation("InstructorBookings", fields: [instructorId], references: [id], onDelete: Cascade)
+  course     Course @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  review     InstructorReview?
+}
+
+model InstructorReview {
+  id           String   @id @default(cuid())
+  bookingId    String   @unique
+  studentId    String
+  instructorId String
+  rating       Int
+  comment      String?
+  createdAt    DateTime @default(now())
+
+  booking    Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  student    User    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  instructor User    @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+}
+
+model StudyMaterial {
+  id          String   @id @default(cuid())
+  title       String
+  locale      String   @default("en")
+  category    String
+  contentUrl  String
+  offlinePack Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model PracticeQuestion {
+  id            String @id @default(cuid())
+  locale        String @default("en")
+  category      String
+  prompt        String
+  options       Json
+  correctAnswer Int
+  explanation   String
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  storagePath String
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Vehicle {
+  id                String   @id @default(cuid())
+  vin               String   @unique
+  make              String
+  model             String
+  year              Int
+  mileage           Int      @default(0)
+  maintenanceDueAt  DateTime?
+  insuranceExpiryAt DateTime
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+}
